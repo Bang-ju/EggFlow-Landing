@@ -1,14 +1,16 @@
 import React from "react";
 import CustomerFilters from "./components/CustomerFilters";
-import CustomerTable, { Customer } from "./components/CustomerTable";
+import CustomerTable from "./components/CustomerTable";
 import AddCustomerModal from "./components/AddCustomerModal";
 import EditCustomerModal from "./components/EditCustomerModal";
+
 import {
   BlueButton,
   GreenButton,
   RedButton,
   GrayButton,
 } from "../../components/ui/button";
+import { Customer } from "@/types/customer";
 
 const CustomerPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);

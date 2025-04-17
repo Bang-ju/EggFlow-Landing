@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Select } from "@/components/ui/select";
 import { BlueButton, GrayButton } from "@/components/ui/button";
 import { OfficialPriceDialog } from "@/components/ui/OfficialPriceDialog";

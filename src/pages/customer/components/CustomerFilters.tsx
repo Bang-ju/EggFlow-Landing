@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BlueButton } from "@/components/ui/button"; // Assuming BlueButton is used for 조회
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
