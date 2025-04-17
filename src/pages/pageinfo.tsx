@@ -10,6 +10,7 @@ import PricePage from "./price";
 import CustomerPage from "./customer";
 import { OrderPage } from "./order";
 import { StatisticPage } from "./statistic/main";
+import ReportPage from "./report";
 
 export const pageinfo: Page[] = [
   {
@@ -99,6 +100,7 @@ export const pageinfo: Page[] = [
       {
         title: "분석 보고서 조회",
         path: "/statistics/report",
+        component: <ReportPage />,
       },
     ],
   },
