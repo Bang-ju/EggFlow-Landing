@@ -49,6 +49,7 @@ export const SalesRegistration = ({
 
   const items = useItemStore((state) => state.items);
   const customers = useCustomerStore((state) => state.customers);
+  const updateCustomer = useCustomerStore((state) => state.updateCustomer);
   const officialPrices = useOfficialPriceStore((state) => state.prices);
   const packages = usePackageStore((state) => state.packages);
   const addSale = useSalesStore((state) => state.addSale);
@@ -116,6 +117,11 @@ export const SalesRegistration = ({
   // 저장 버튼 클릭 핸들러
   const handleSaveSale = () => {
     if (!form) return;
+    if (!selectedCustomer) {
+      alert("거래처를 선택해주세요.");
+      return;
+    }
+
     // SaleItemWithInput[] → SaleItem[] 변환
     const items = form.items.map(
       ({ itemId, quantityEgg, price, amount, dc, quantity, palettes }) => ({
@@ -142,6 +148,11 @@ export const SalesRegistration = ({
     } else {
       updateSale(newSale);
     }
+
+    updateCustomer({
+      ...selectedCustomer,
+      totalTransaction: selectedCustomer.totalTransaction + totalAmount,
+    });
 
     // 저장알림
     alert("저장되었습니다.");

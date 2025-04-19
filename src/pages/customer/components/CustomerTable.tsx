@@ -15,7 +15,6 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
   setSelectedRows,
 }) => {
   const customers = useCustomerStore((state) => state.customers);
-
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedRows(customers.map((customer) => customer.id));
@@ -35,6 +34,7 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
   return (
     <div className="bg-white p-4 border-t border-border overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
+        {/* 테이블 헤더 */}
         <thead className="bg-[#F8FAFC]">
           <tr>
             <th
@@ -137,77 +137,81 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
             </th>
           </tr>
         </thead>
+
+        {/* 테이블 바디 */}
         <tbody className="bg-white divide-y divide-gray-200">
-          {customers.map((customer, index) => (
-            <tr
-              key={customer.id}
-              className={`${
-                selectedRows.includes(customer.id) ? "bg-blue-100" : ""
-              }`}
-            >
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border border-border">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  checked={selectedRows.includes(customer.id)}
-                  onChange={() => handleSelectRow(customer.id)}
-                />
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
-                {index + 1}
-              </td>
-              <td
-                onClick={() => onEditClick(customer)}
-                className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border cursor-pointer hover:bg-gray-50"
-              >
-                {customer.name}
-              </td>
-              <td
-                onClick={() => onEditClick(customer)}
-                className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border cursor-pointer hover:bg-gray-50"
-              >
-                {customer.manager}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
-                {customer.type}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
-                {customer.ceoName}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
-                {customer.businessNumber}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
-                {customer.phone}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
-                {customer.address}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
-                {customer.region}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
-                {customer.discount}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border border-border">
-                {customer.registrationDate}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
-                {customer.balance.toLocaleString()}
-              </td>
-              <td
-                className={`px-4 py-2 whitespace-nowrap text-sm text-right border border-border ${
-                  customer.profit >= 0 ? "text-green-600" : "text-red-600"
+          {customers.map((customer, index) => {
+            return (
+              <tr
+                key={customer.id}
+                className={`${
+                  selectedRows.includes(customer.id) ? "bg-blue-100" : ""
                 }`}
               >
-                {customer.profit >= 0 ? "+" : ""}
-                {customer.profit.toLocaleString()}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
-                {customer.totalTransaction.toLocaleString()}
-              </td>
-            </tr>
-          ))}
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border border-border">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    checked={selectedRows.includes(customer.id)}
+                    onChange={() => handleSelectRow(customer.id)}
+                  />
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
+                  {index + 1}
+                </td>
+                <td
+                  onClick={() => onEditClick(customer)}
+                  className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border cursor-pointer hover:bg-gray-50"
+                >
+                  {customer.name}
+                </td>
+                <td
+                  onClick={() => onEditClick(customer)}
+                  className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border cursor-pointer hover:bg-gray-50"
+                >
+                  {customer.manager}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
+                  {customer.type}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
+                  {customer.ceoName}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
+                  {customer.businessNumber}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
+                  {customer.phone}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
+                  {customer.address}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-border">
+                  {customer.region}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
+                  {customer.discount}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border border-border">
+                  {customer.registrationDate}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
+                  ₩{customer.balance.toLocaleString()}
+                </td>
+                <td
+                  className={`px-4 py-2 whitespace-nowrap text-sm text-right border border-border ${
+                    customer.profit >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {customer.profit >= 0 ? "+" : ""}₩
+                  {customer.profit.toLocaleString()}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right border border-border">
+                  ₩{customer.totalTransaction.toLocaleString()}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       {/* TODO: Add pagination component */}

@@ -49,8 +49,8 @@ export const initialCustomers: Customer[] = [
     region: "경기",
     discount: 50,
     registrationDate: "2025-04-09",
-    balance: 2500000,
-    profit: 3000000,
-    totalTransaction: 7000000,
+    balance: 0,
+    profit: 0,
+    totalTransaction: 0,
   },
 ];

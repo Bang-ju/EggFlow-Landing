@@ -186,7 +186,7 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
             </div>
             <div className="space-y-1">
               <label className="block text-sm font-medium text-gray-700">
-                DC * (%)
+                DC *
               </label>
               <Input
                 type="number"

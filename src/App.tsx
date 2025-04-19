@@ -6,6 +6,9 @@ import { useStockStore } from "./store/stockStore";
 import { useItemStore } from "./store/itemStore";
 import { usePurchaseStore } from "./store/purchaseStore";
 import { useSalesStore } from "./store/salesStore";
+import { useCustomerStore } from "./store/customerStore";
+import { usePaymentStore } from "./store/paymentStore";
+import { Customer } from "./types/customer";
 
 // 모든 경로를 포함하는 라우트 배열을 생성하는 함수
 const getAllRoutes = () => {
@@ -73,6 +76,42 @@ function App() {
     useStockStore.getState().setStocks(newStocks);
   }, [purchases, sales]);
 
+  const payments = usePaymentStore((state) => state.payments);
+  const customers = useCustomerStore((state) => state.customers);
+  const updateCustomer = useCustomerStore((state) => state.updateCustomer);
+
+  // 거래 변경시 거래처 잔금, 총 거래액 변경
+  useEffect(() => {
+    customers.forEach((customer) => {
+      const totalTransaction = sales
+        .filter((s) => s.customerId === customer.id.toString())
+        .reduce((sum, sale) => sum + sale.totalAmount, 0);
+
+      const balance = payments
+        .filter((p) => p.customerId === customer.id.toString())
+        .reduce((sum, payment) => sum + payment.amount, 0);
+
+      updateCustomer({
+        ...customer,
+        totalTransaction,
+        balance: totalTransaction - balance,
+      });
+    });
+  }, [sales]);
+
+  // payment 변경시 거래처 잔금 변경
+  useEffect(() => {
+    customers.forEach((customer: Customer) => {
+      const balance = payments
+        .filter((p) => p.customerId === customer.id.toString())
+        .reduce((sum, payment) => sum + payment.amount, 0);
+
+      updateCustomer({
+        ...customer,
+        balance: customer.totalTransaction - balance,
+      });
+    });
+  }, [payments]);
   return (
     <Router>
       <div className="flex h-screen w-screen overflow-hidden">
