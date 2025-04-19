@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OfficialPriceDialog } from "@/components/ui/OfficialPriceDialog";
-import { usePaymentStore } from "@/store/paymentStore";
 import { useSalesStore } from "@/store/salesStore";
 import { useItemStore } from "@/store/itemStore";
 import { calcUnitPrice } from "@/utils/calc";
 import { useCustomerStore } from "@/store/customerStore";
 import { useOfficialPriceStore } from "@/store/officialPriceStore";
 import { usePackageStore } from "@/store/packageStore";
+import PaymentModal from "@/components/PaymentModal";
 
 // Sale 타입 import
 import type { Sale } from "@/store/salesStore";
@@ -37,130 +37,6 @@ interface SalesRegistrationProps {
   onNew?: () => void;
 }
 
-// 입금 등록 모달 컴포넌트 추출
-interface PaymentModalProps {
-  visible: boolean;
-  onClose: () => void;
-  paymentAmount: number;
-  setPaymentAmount: (amount: number) => void;
-  handleSavePayment: () => void;
-}
-
-const PaymentModal = ({
-  visible,
-  onClose,
-  paymentAmount,
-  setPaymentAmount,
-  handleSavePayment,
-}: PaymentModalProps) => {
-  if (!visible) return null;
-  return (
-    <div className="fixed inset-0 bg-gray-500/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-md w-[600px] max-w-[90%]">
-        <div className="border-b p-4">
-          <h3 className="font-bold">입금 등록</h3>
-        </div>
-        {/* 데모 모드 알림 */}
-        <div className="p-4 bg-yellow-50 border border-yellow-400 text-yellow-700 text-sm rounded mb-4">
-          🚧 현재 개발 중인 기능입니다. 데모 환경에서는 사용할 수 없습니다.
-        </div>
-        <div className="p-6 space-y-6">
-          <div className="flex flex-col space-y-3">
-            <div className="flex justify-between">
-              <div className="font-medium">매출전표</div>
-              <div className="border rounded p-2 w-64 text-gray-500">
-                전표 번호
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-medium">거래처</div>
-              <div className="border rounded p-2 w-64 text-gray-500">
-                거래처 명
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-medium">총거래액</div>
-              <div className="border rounded p-2 w-64 text-right">
-                ₩3,700,000
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-medium">현 입금액</div>
-              <div className="border rounded p-2 w-64 text-right">
-                ₩2,500,000
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-medium">잔금</div>
-              <div className="border rounded p-2 w-64 text-right text-red-600">
-                ₩1,200,000
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <GreenButton>잔금 전체 입력</GreenButton>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-medium">입금액</div>
-              <div className="flex">
-                <Input
-                  type="number"
-                  className="w-20 sm:text-sm text-right"
-                  value={paymentAmount}
-                  onChange={(e) => setPaymentAmount(Number(e.target.value))}
-                />
-                <GreenButton onClick={handleSavePayment}>입금 저장</GreenButton>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-medium mb-2">입금내역</h4>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="border p-2 text-center text-sm font-bold">
-                    연번
-                  </th>
-                  <th className="border p-2 text-center text-sm font-bold">
-                    입금일
-                  </th>
-                  <th className="border p-2 text-center text-sm font-bold">
-                    입금액
-                  </th>
-                  <th className="border p-2 text-center text-sm font-bold">
-                    입금 후 잔액
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="bg-gray-100 text-sm">
-                  <td className="border p-2 text-center">1</td>
-                  <td className="border p-2 text-center">2025.02.07</td>
-                  <td className="border p-2 text-right">₩2,500,000</td>
-                  <td className="border p-2 text-right text-red-600">
-                    ₩1,200,000
-                  </td>
-                </tr>
-                <tr className="bg-gray-50 font-bold text-sm">
-                  <td colSpan={2} className="border p-2 text-center">
-                    계
-                  </td>
-                  <td className="border p-2 text-right">₩2,500,000</td>
-                  <td className="border p-2 text-right text-red-600">
-                    ₩1,200,000
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="border-t p-4 flex justify-end">
-          <BlueButton onClick={onClose}>확인</BlueButton>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // 매출 등록 컴포넌트
 export const SalesRegistration = ({
   sale,
@@ -169,10 +45,8 @@ export const SalesRegistration = ({
 }: SalesRegistrationProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
-  const [paymentAmount, setPaymentAmount] = useState(0);
   const [officialPriceOpen, setOfficialPriceOpen] = useState(false);
 
-  const addPayment = usePaymentStore((state) => state.addPayment);
   const items = useItemStore((state) => state.items);
   const customers = useCustomerStore((state) => state.customers);
   const officialPrices = useOfficialPriceStore((state) => state.prices);
@@ -187,7 +61,6 @@ export const SalesRegistration = ({
   const [form, setForm] = useState<
     (Omit<Sale, "items"> & { items: SaleItemWithInput[] }) | null
   >(null);
-
   // DC 일괄적용 입력 상태
   const [bulkDC, setBulkDC] = useState(0);
 
@@ -238,21 +111,6 @@ export const SalesRegistration = ({
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
-  };
-
-  // 입금 저장 버튼 클릭 핸들러
-  const handleSavePayment = () => {
-    addPayment({
-      id: String(Date.now()),
-      date: new Date().toISOString().slice(0, 10),
-      customerId: "customer1", // 실제 선택값으로 교체 필요
-      amount: paymentAmount,
-      method: "현금", // 예시
-      memo: "",
-      saleId: "12345", // 실제 전표번호로 교체 필요
-    });
-    setPaymentAmount(0);
-    setShowPaymentModal(false);
   };
 
   // 저장 버튼 클릭 핸들러
@@ -307,6 +165,54 @@ export const SalesRegistration = ({
   useEffect(() => {
     if (selectedCustomer) setBulkDC(selectedCustomer.discount || 0);
   }, [selectedCustomer]);
+
+  // 금액 동기화 useEffect
+  useEffect(() => {
+    if (!form) return;
+    let changed = false;
+    const newItems = form.items.map((item) => {
+      const itemInfo = items.find((i) => i.id === item.itemId);
+      const region = selectedCustomer?.region || "경기";
+      const date = "2025-02-12"; // TODO: 실제 선택값 연동
+      const spec = itemInfo?.spec || "";
+      const officialPriceObj = officialPrices.find(
+        (p) => p.region === region && p.date === date
+      );
+      let officialPrice = 0;
+      if (officialPriceObj) {
+        if (spec.includes("왕")) officialPrice = officialPriceObj.king;
+        else if (spec.includes("특"))
+          officialPrice = officialPriceObj.extraLarge;
+        else if (spec.includes("대")) officialPrice = officialPriceObj.large;
+        else if (spec.includes("중")) officialPrice = officialPriceObj.medium;
+        else if (spec.includes("소")) officialPrice = officialPriceObj.small;
+      }
+      const packageCost = packages.find(
+        (pkg) => pkg.name === itemInfo?.packaging
+      )?.cost
+        ? Number(packages.find((pkg) => pkg.name === itemInfo?.packaging)?.cost)
+        : 0;
+      const dc = item.dc;
+
+      const units = Number(itemInfo?.unit) || 0;
+      const unitPrice = calcUnitPrice({
+        officialPrice,
+        packageCost,
+        dc,
+        units,
+      });
+      const amount = item.quantity * unitPrice;
+      if (amount !== item.amount) {
+        changed = true;
+        return { ...item, amount };
+      }
+      return item;
+    });
+    if (changed) {
+      setForm((prev) => prev && { ...prev, items: newItems });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form?.items, items, selectedCustomer, officialPrices, packages]);
 
   return (
     <div className="flex flex-col gap-2 bg-white rounded-[4px] w-full">
@@ -462,6 +368,7 @@ export const SalesRegistration = ({
           <div className="bg-white p-4">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
+                {/* 테이블 헤더 */}
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="border p-2 min-w-20 text-center text-sm font-bold">
@@ -508,8 +415,10 @@ export const SalesRegistration = ({
                     </th>
                   </tr>
                 </thead>
+
+                {/* 테이블 바디 */}
                 <tbody>
-                  {(form?.items || []).map((item, idx) => {
+                  {(form?.items || []).map((item) => {
                     const itemInfo = items.find((i) => i.id === item.itemId);
                     // 공시가: 거래처의 지역(region) 사용
                     const region = selectedCustomer?.region || "경기";
@@ -549,23 +458,13 @@ export const SalesRegistration = ({
                       dc,
                       units,
                     });
-
-                    const amount = item.quantity * unitPrice;
-                    if (amount !== item.amount) {
-                      setForm(
-                        (prev) =>
-                          prev && {
-                            ...prev,
-                            items: prev.items.map((it, i) =>
-                              i === idx ? { ...it, amount } : it
-                            ),
-                          }
-                      );
-                    }
+                    // amount 계산은 useEffect에서 동기화됨
                     const unitPriceDiff = unitPrice - officialPrice * units;
                     return (
                       <tr key={item.itemId} className="bg-gray-100 text-sm">
-                        <td className="border p-2 text-center">{idx + 1}</td>
+                        <td className="border p-2 text-center">
+                          {/* idx + 1 제거 */}
+                        </td>
                         <td className="border p-2 text-right">
                           {itemInfo?.code}
                         </td>
@@ -585,8 +484,8 @@ export const SalesRegistration = ({
                                 (prev) =>
                                   prev && {
                                     ...prev,
-                                    items: prev.items.map((it, i) =>
-                                      i === idx
+                                    items: prev.items.map((it) =>
+                                      it.itemId === item.itemId
                                         ? {
                                             ...it,
                                             dc: Number(e.target.value),
@@ -616,8 +515,10 @@ export const SalesRegistration = ({
                                 (prev) =>
                                   prev && {
                                     ...prev,
-                                    items: prev.items.map((it, i) =>
-                                      i === idx ? { ...it, palettes: val } : it
+                                    items: prev.items.map((it) =>
+                                      it.itemId === item.itemId
+                                        ? { ...it, palettes: val }
+                                        : it
                                     ),
                                   }
                               );
@@ -638,8 +539,8 @@ export const SalesRegistration = ({
                                 (prev) =>
                                   prev && {
                                     ...prev,
-                                    items: prev.items.map((it, i) =>
-                                      i === idx
+                                    items: prev.items.map((it) =>
+                                      it.itemId === item.itemId
                                         ? {
                                             ...it,
                                             quantity: val,
@@ -725,11 +626,9 @@ export const SalesRegistration = ({
         </div>
       )}
       <PaymentModal
+        saleId={sale?.id || form?.id || ""}
         visible={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        paymentAmount={paymentAmount}
-        setPaymentAmount={setPaymentAmount}
-        handleSavePayment={handleSavePayment}
       />
       <OfficialPriceDialog
         isOpen={officialPriceOpen}
